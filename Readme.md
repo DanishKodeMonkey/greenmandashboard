@@ -163,10 +163,9 @@ Pretty straight forward, build upon node:16, working from /app, copy the node pa
 install using npm, copy the remaining files to /app and expose on port 800
 finally run the nodemon devstart command.
 
-The main difference between Dockerfile(prod) and Dockerfile.dev is that the application is built
-and then the built application is run instead.
+#### Development
 
-```
+```dockerfile
 FROM node:16
 
 WORKDIR /app
@@ -176,16 +175,43 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-<!-- dev -->
+
 EXPOSE 8000
 
 CMD ["npm", "run", "devstart"]
-<!-- prod -->
+
+```
+
+#### Production
+
+In production we create a multi stage build using the alpine build of node, because it creates a smaller final image by excluding unnecessary development files and only copying the essential built assets from the first stage.
+
+##### Stage 1 - Builder:
+Like before, copy the relevant files to the work directory and install the dependencies.
+and copy over our application code.
+we then run the build script, allowing typescript to compile and bundle for production
+
+##### Stage 2 - Server :
+Like before, we prepare our work directory, installing the base image but this time only installing the production dependencies, we then copy the built assets (/public)
+and compiled code from our builder stage to our server stage.
+Finally we run the default node start command, to run the application as defined in package.json
+
+```dockerfile
+FROM node:16-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
 RUN npm run build
 
+FROM node:16-alpine AS server
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY --from=builder ./app/public ./public
+COPY --from=builder ./app/build ./build
 EXPOSE 8000
-
-CMD ["node", "start]
+CMD ["npm", "start"]
 ```
 
 ### docker-compose.yml
