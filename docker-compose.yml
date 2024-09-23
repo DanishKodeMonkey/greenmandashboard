@@ -1,13 +1,30 @@
-version: "1"
 
 services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: greenai
+      POSTGRES_PASSWORD: iscomplicated
+      POSTGRES_DB: powerrangers
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data #d ata persistance 
   app:
     build: 
       context: .
       dockerfile: Dockerfile.dev
     volumes:
       - ./src:/app/src
-    environment:
-      - PORT=8000
+
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgresql://greenai:iscomplicated@db:5432/powerrangers
+
+volumes:
+  db_data: 

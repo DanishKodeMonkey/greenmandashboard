@@ -187,11 +187,13 @@ CMD ["npm", "run", "devstart"]
 In production we create a multi stage build using the alpine build of node, because it creates a smaller final image by excluding unnecessary development files and only copying the essential built assets from the first stage.
 
 ##### Stage 1 - Builder:
+
 Like before, copy the relevant files to the work directory and install the dependencies.
 and copy over our application code.
 we then run the build script, allowing typescript to compile and bundle for production
 
 ##### Stage 2 - Server :
+
 Like before, we prepare our work directory, installing the base image but this time only installing the production dependencies, we then copy the built assets (/public)
 and compiled code from our builder stage to our server stage.
 Finally we run the default node start command, to run the application as defined in package.json
@@ -230,4 +232,57 @@ services:
         volumes: -./src:/app/src
         ports:
             - '8000:8000'
+```
+
+## Connecting to database
+
+### Prisma ORM
+
+Prisma is an ORM that simplifies database interactions by providing a type-safe API to work with databases.
+
+Prisma is, once installed and initialized, run from its prisma folder through its prisma schema
+during development, the schema is used to generate a powerful query engine using the schema definitions which is imported to the rest of the project.
+
+#### postgreSQL
+
+For the purposes of this, we will use a dockerized postgreSQL database to connect to.
+
+Back to yml!
+
+We have added a database service, setting up a amazing postgresql database and linking
+it to our app using a connection string (as required by prisma)
+
+```yml
+version: '2'
+
+services:
+    db:
+        image: postgres:16
+        restart: always
+        environment:
+            POSTGRES_USER: greenai
+            POSTGRES_PASSWORD: iscomplicated
+            POSTGRES_HOST: powerrangers
+            POSTGRES_DB: trading
+        ports:
+            - '5432:5432'
+        volumes:
+            - db_data:/var/lib/postgresql/data #d ata persistance
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        volumes:
+            - ./src:/app/src
+
+        ports:
+            - '8000:8000'
+        depends_on:
+            - db
+        environment:
+            - PORT=8000
+            - DATABASE_URL=postgresql://greenai:iscomplicated@powerrangers:5432/trading
+
+volumes:
+    db_data:
 ```
