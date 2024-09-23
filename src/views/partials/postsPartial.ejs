@@ -1,0 +1,17 @@
+<div class="posts">
+    <h2>Posts</h2>
+    <div class="posts-header">
+        <div>Date</div>
+        <div>Time</div>
+        <div>Price</div>
+    </div>
+    <div class="posts-list">
+        <% posts.forEach(post => { %>
+         <div class="post-item">
+            <div><%= post.date.toISOString().split('T')[0] %></div>
+            <div><%= post.date.toISOString().split('T')[1] %></div>
+            <div><%= post.price.toFixed(2) %></div>
+         </div>
+        <% }) %>
+    </div>
+</div>

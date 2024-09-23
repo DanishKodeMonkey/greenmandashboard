@@ -10,5 +10,14 @@
     </head>
     <body>
         <h1>Welcome to the <%= title %></h1>
+
+        <% if (!errors && (!files && files === 0)) { %>
+         <h2>Loading...</h2>
+        <% } else if(errors) { %>
+            <%- include('partials/errors.ejs', {errors:errors}) %>
+        <% } else {%> 
+            <%- include('partials/postsPartial.ejs', {posts:posts}) %>    
+        <% } %>
+
     </body>
 </html>
