@@ -1,0 +1,16 @@
+/* public/styles.css */
+body {
+    background-color: #e9f5ee; /* Light green background */
+}
+
+h1, h2, h3, p {
+    color: #2e7d32; /* Dark green text */
+}
+
+.posts {
+    border: 1px solid #2e7d32; /* Dark green border for posts */
+}
+
+.row.border-bottom {
+    border-bottom: 1px solid #c8e6c9; /* Light green for row borders */
+}
