@@ -157,11 +157,14 @@ V
 
 Express like anything can be dockerized. So is this app
 
-Dockerfile
+### Dockerfile and Dockerfile.dev
 
 Pretty straight forward, build upon node:16, working from /app, copy the node package files and
 install using npm, copy the remaining files to /app and expose on port 800
-finally run the nodemon devstart command
+finally run the nodemon devstart command.
+
+The main difference between Dockerfile(prod) and Dockerfile.dev is that the application is built
+and then the built application is run instead.
 
 ```
 FROM node:16
@@ -173,13 +176,19 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-
+<!-- dev -->
 EXPOSE 8000
 
 CMD ["npm", "run", "devstart"]
+<!-- prod -->
+RUN npm run build
+
+EXPOSE 8000
+
+CMD ["node", "start]
 ```
 
-docker-compose.yml
+### docker-compose.yml
 
 Main point of note here is the mounting of the project src folder to the docker container folder.
 This will allow the server to be run with auto-restart on code change.
