@@ -97,3 +97,58 @@ greendashboard/
 ├── README.md                  # Project documentation
 └── tsconfig.json              # TypeScript configuration file
 ```
+
+With this our traffic can now be directed and handled properly as such:
+
+REQUEST
+|
+V
++--------------------------------+
+| app.ts |
+|--------------------------------|
+| - Middleware |
+| - Parses req.body to JSON |
+| - Logs traffic using Morgan |
+| - Serves static content |
++--------------------------------+
+|
+V
++--------------------+
+| Router Matching |
+| (e.g. app.use('/', |
+| indexRouter)) |
++--------------------+
+|
+V
++------------------------+
+| router/indexRouter.ts |
+|------------------------|
+| - Matches sub-routes |
+| (e.g. '/' root route)|
++------------------------+
+|
+V
++-------------------------------------+
+| Middleware Functions are called |
+| (e.g. indexController.getDashboard) |
+| Could include any number of |
+| middleware in sequence |
++-------------------------------------+
+|
+V
++---------------------------------+
+| controller/indexController.ts |
+|---------------------------------|
+| - Executes logic against req |
+| - TypeScript checks shapes |
+| - Generates response (EJS view) |
+| Could be anything, including |
+| fetching data from API, |
+| generating graphs, tables etc. |
++---------------------------------+
+|
+V
++----------------------+
+| Response to Client |
+| (Returned to browser)|
++----------------------+
