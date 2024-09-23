@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-        />
-        <title><%= title %></title>
-    </head>
+    <%- include('partials/head.ejs', {title: title}) %>
     <body>
         <h1>Welcome to the <%= title %></h1>
 
-        <% if (!errors && (!files && files === 0)) { %>
-         <h2>Loading...</h2>
-        <% } else if(errors) { %>
-            <%- include('partials/errors.ejs', {errors:errors}) %>
-        <% } else {%> 
-            <%- include('partials/postsPartial.ejs', {posts:posts}) %>    
-        <% } %>
+        <div class="container">
+            <% if(errors.length > 0) { %>
+                <%- include('partials/errors.ejs', {errors:errors}) %>
+            <% } else if(posts.length === 0){%>
+                <h2>No posts available.</h2>
+            <% } else { %>
+                <%- include('partials/postsPartial.ejs', {posts:posts}) %>
+            <% } %>
+        </div>
 
     </body>
 </html>
