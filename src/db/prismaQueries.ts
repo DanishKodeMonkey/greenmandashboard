@@ -5,7 +5,7 @@ import prisma from '../db/prismaclient'
 const postQueries = {
     getAllPosts: async()=>{
         try{
-            const posts = await prisma.posts.findMany()
+            const posts = await prisma.post.findMany()
             return posts
         }catch(err){
             console.error('Error fetching all posts: ', err)
