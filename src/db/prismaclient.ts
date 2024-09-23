@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient, Prisma } from '@prisma/client'
 type Signal = 'SIGINT' | 'SIGTERM'
 
 const prisma = new PrismaClient({
@@ -11,7 +11,7 @@ const prisma = new PrismaClient({
 });
 
 // Query logging middleware
-prisma.$on('query', (e) => {
+prisma.$on('query', (e: Prisma.QueryEvent) => {
     console.log(`[${new Date().toISOString()}] Query:`, e.query);
     console.log(`[${new Date().toISOString()}] Params:`, e.params);
     console.log(`[${new Date().toISOString()}] Duration:`, e.duration + 'ms');
