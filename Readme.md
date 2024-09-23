@@ -1,5 +1,7 @@
 # GreenDashboard
 
+WIP
+
 ## Proof of concept of a lightweight express typescript dashboard
 
 ### Setup
