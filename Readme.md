@@ -152,3 +152,47 @@ V
 | Response to Client |
 | (Returned to browser)|
 +----------------------+
+
+### Dockerize
+
+Express like anything can be dockerized. So is this app
+
+Dockerfile
+
+Pretty straight forward, build upon node:16, working from /app, copy the node package files and
+install using npm, copy the remaining files to /app and expose on port 800
+finally run the nodemon devstart command
+
+```
+FROM node:16
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["npm", "run", "devstart"]
+```
+
+docker-compose.yml
+
+Main point of note here is the mounting of the project src folder to the docker container folder.
+This will allow the server to be run with auto-restart on code change.
+
+```yml
+version: '1'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes: -./src:/app/src
+        ports:
+            - '8000:8000'
+```
