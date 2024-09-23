@@ -22,6 +22,7 @@ app.use(express.json()) /* body parser, parsing request body to json */
 app.use(morgan("tiny")) /* HTTP logger with minimal logging details(tiny), including timer for request/response cycle */
 app.use(express.static("public")) /* Serve static files to be available like pictures etc. */
 
+/* Define routers in order of root route, will be matched against from top to bottom. */
 app.use('/', indexRouter)
 
 
