@@ -16,6 +16,5 @@ datasource db {
 model Post {
   id    Int      @id @default(autoincrement())
   date  DateTime
-  time  DateTime
   price Float
 }
