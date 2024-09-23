@@ -1,16 +1,15 @@
 <div class="posts">
     <h2>Posts</h2>
-    <div class="posts-header">
-        <div>Date</div>
-        <div>Time</div>
-        <div>Price</div>
+    <div class="row mb-2">
+        <div class="col">Date</div>
+        <div class="col">Time</div>
+        <div class="col">Price</div>
     </div>
     <div class="posts-list">
         <% posts.forEach(post => { %>
-         <div class="post-item">
-            <div><%= post.date.toISOString().split('T')[0] %></div>
-            <div><%= post.date.toISOString().split('T')[1] %></div>
-            <div><%= post.price.toFixed(2) %></div>
+         <div class="row border-bottom py-2">
+            <div class="col"><%= post.date.toISOString().split('T')[0] %></div>
+            <div class="col"><%= new Date(post.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) %></div>            <div class="col"><%= post.price.toFixed(2) %></div>
          </div>
         <% }) %>
     </div>
