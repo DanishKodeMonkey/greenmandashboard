@@ -260,7 +260,7 @@ services:
         image: postgres:16
         restart: always
         environment:
-            POSTGRES_USER: greenai
+            POSTGRES_USER: greenman
             POSTGRES_PASSWORD: iscomplicated
             POSTGRES_HOST: powerrangers
             POSTGRES_DB: trading
@@ -281,8 +281,22 @@ services:
             - db
         environment:
             - PORT=8000
-            - DATABASE_URL=postgresql://greenai:iscomplicated@powerrangers:5432/trading
+            - DATABASE_URL=postgresql://greenman:iscomplicated@powerrangers:5432/trading
 
 volumes:
     db_data:
 ```
+
+initialise prisma client to db
+
+docker-compose run app npx prisma migrate dev --name init
+
+populateDB
+
+docker-compose run app npx ts-node /app/src/db/populateDB.ts
+
+verifyDB
+
+docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers
+
+SELECT \* FROM "Post";
