@@ -136,7 +136,7 @@ Express like anything can be dockerized. So is this app
 ### Dockerfile and Dockerfile.dev
 
 Pretty straight forward, build upon node:16, working from /app, copy the node package files and
-install using npm, copy the remaining files to /app and expose on port 800
+install using npm, copy the remaining files to /app and expose on port 8000
 finally run the nodemon devstart command.
 
 #### Development
@@ -229,7 +229,7 @@ To simplify engagements for the project, a population script was made to generat
 3. VerifyDB - logs in to the docker database and queries a simple select all command to see if the previous devpopulatedb command worked. Then terminates the query session gracefully.
 
 ```json
-  "devcheckdb: "docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers -c 'SELECT * FROM \"Post\";'"
+  "devcheckdb": "docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers -c 'SELECT * FROM \"Post\";'"
 ```
 
 ## Connecting to database
