@@ -5,7 +5,10 @@
   "main": "app.js",
   "scripts": {
     "build": "tsc",
-    "devstart": "nodemon"
+    "devstart": "nodemon",
+    "devpopulatedb": "docker-compose run app npx ts-node /app/src/db/populateDB.ts",
+    "devcheckdb": "docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers -c 'SELECT * FROM \"Post\";'"
+
   },
   "nodemonConfig": {
     "watch": [

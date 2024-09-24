@@ -11,6 +11,7 @@ WIP
 The project leverages the following packages in the node environment:
 
 -   [express](http://expressjs.com/) - The javascript framework we build the project upon
+-   [express-async-handler](https://www.npmjs.com/package/express-async-handler) - Simple async exceptions handler, wrapper for existing async functions.
 -   [typescript](https://www.typescriptlang.org/) - The javascript superset allowing type sets in the project
     -   [@types](https://www.typescriptlang.org/docs/handbook/2/type-declarations.html#what-do-type-declarations-look-like) - Additional tried and true community made types to infer typescript rules upon packages without native support
     -   [/express](https://www.npmjs.com/package/@types/express) - Typescript types for express (namely, Application)
@@ -21,6 +22,7 @@ The project leverages the following packages in the node environment:
 -   [ts-node](https://www.npmjs.com/package/ts-node) - Compiler handler, compiling ts to javascript for us during dev
 -   [morgan](https://www.npmjs.com/package/morgan) - A convenient request logger middleware, (will be used for its light request/response timer in this case)
 -   [EJS](https://ejs.co/) - A lightweight and fast embedded javascript view engine
+-   [Prisma ORM](https://www.prisma.io/) - Powerful query manager, enables type safety for query operations, and generation of useful query engine tied directly to database schema.
 
 #### Configuration
 
@@ -74,86 +76,58 @@ The projects structure is as follows;
 ```
 greendashboard/
 │
-├── build/                     # Compiled output of TypeScript files
+├── build/                         # Compiled output of TypeScript files
+│                                   # This folder is automatically generated after running `tsc`.
 │
-├── node_modules/             # Installed dependencies
+│── prisma/                        # Prisma-related files for database schema and migrations
+│   │── schema.prisma              # Prisma schema file defining your data models and relations
 │
-├── public/                    # Static files (images, CSS, JS)
+├── node_modules/                  # Installed dependencies managed by npm
+│                                   # Automatically generated after running `npm install`.
 │
-├── src/                       # Source files
-│   ├── controller/            # Controllers for handling requests
-│   │   └── indexController.ts # Controller for the index route
+├── public/                        # Static files (images, CSS, JS)
+│   │── styles.css                 # Custom styles to load on top of Bootstrap for styling the UI
+│
+├── src/                           # Source files for the application
+│   ├── controller/                # Controllers for handling HTTP requests and business logic
+│   │   └── indexController.ts     # Controller for handling requests to the index route
 │   │
-│   ├── router/                # Routers for defining application routes
-│   │   └── indexRouter.ts      # Router for the index route
+│   ├── db/                        # Database-related scripts and configurations
+│   │   │                           # Alternatively would be called 'api' for all api interaction logic
+│   │   ├── populateDB.ts          # Script for populating the database with initial data
+│   │   ├── prismaclient.ts        # Prisma client setup and config for connecting to the database
+│   │   ├── prismaQueries.ts       # Prisma functions to be used in controllers across app
 │   │
-│   ├── views/                 # EJS view templates
-│   │   └── index.ejs          # EJS template for the dashboard
+│   ├── interfaces/                # TypeScript interfaces for typing objects and data structures
+│   │   ├── index.ts               # Main file for exporting interfaces for the index controller
 │   │
-│   └── app.ts                 # Main application entry point
+│   ├── router/                    # Routers for defining application routes
+│   │   └── indexRouter.ts         # Router for handling the index route and sub-routes
+│   │
+│   ├── views/                     # EJS view templates for rendering HTML pages with javascript
+│   │   └── index.ejs              # EJS template for the main dashboard page
+│   │   └── partials/              # Reusable partial templates included in page views
+│   │       ├── errors.ejs         # Partial for displaying error messages
+│   │       ├── footer.ejs         # Footer partial for the application
+│   │       ├── head.ejs           # Head partial for including meta tags, stylesheets, etc.
+│   │       ├── postsPartial.ejs   # Partial for displaying a list of posts
+│   │
+│   └── app.ts                     # Main application entry point (Express app setup)
 │
-├── .env                       # Environment variables
-├── .gitignore                 # Files and folders to ignore in Git
-├── package-lock.json          # Exact version of installed dependencies
-├── package.json               # Project metadata and dependencies
-├── README.md                  # Project documentation
-└── tsconfig.json              # TypeScript configuration file
+├── .env                           # Environment variables for configuration (e.g., DB credentials)
+├── .gitignore                     # Specifies which files and directories to ignore in Git
+├── docker-compose.yml             # Docker Compose configuration for multi-container setup
+├── Dockerfile                     # Dockerfile for production build
+├── Dockerfile.dev                 # Dockerfile for development environment with live-reload support
+├── package-lock.json              # Automatically generated; locks the exact versions of installed dependencies
+├── package.json                   # Project metadata, scripts, and dependencies configuration
+├── README.md                      # Project documentation and instructions
+└── tsconfig.json                  # TypeScript configuration file specifying compiler options
 ```
 
 With this our traffic can now be directed and handled properly as such:
 
-REQUEST
-|
-V
-+--------------------------------+
-| app.ts |
-|--------------------------------|
-| - Middleware |
-| - Parses req.body to JSON |
-| - Logs traffic using Morgan |
-| - Serves static content |
-+--------------------------------+
-|
-V
-+--------------------+
-| Router Matching |
-| (e.g. app.use('/', |
-| indexRouter)) |
-+--------------------+
-|
-V
-+------------------------+
-| router/indexRouter.ts |
-|------------------------|
-| - Matches sub-routes |
-| (e.g. '/' root route)|
-+------------------------+
-|
-V
-+-------------------------------------+
-| Middleware Functions are called |
-| (e.g. indexController.getDashboard) |
-| Could include any number of |
-| middleware in sequence |
-+-------------------------------------+
-|
-V
-+---------------------------------+
-| controller/indexController.ts |
-|---------------------------------|
-| - Executes logic against req |
-| - TypeScript checks shapes |
-| - Generates response (EJS view) |
-| Could be anything, including |
-| fetching data from API, |
-| generating graphs, tables etc. |
-+---------------------------------+
-|
-V
-+----------------------+
-| Response to Client |
-| (Returned to browser)|
-+----------------------+
+![diagram of request traversal](./public/requestresponsecycle.drawio.svg)
 
 ### Dockerize
 
@@ -236,7 +210,31 @@ services:
             - '8000:8000'
 ```
 
+### NPM scripts for docker.
+
+To simplify engagements for the project, a population script was made to generate random entries in a docker database, in order to streamline the bootup process on a new device, some new scripts should be added to the `package.json`
+
+1. devinitprisma - Initialize the prisma query engine by tying it to the database and generating the prismaclient package for import in the project, all done with prisma migrate.
+
+```json
+"devinitprisma": "docker-compose run app npx prisma migrate dev --name init"
+```
+
+2. devpopulatedb - populates the docker postgreSQL database with 50 generated entries through Prisma.
+
+```json
+"devpopulatedb": "docker-compose run app npx ts-node /app/src/db/populateDB.ts"
+```
+
+3. VerifyDB - logs in to the docker database and queries a simple select all command to see if the previous devpopulatedb command worked. Then terminates the query session gracefully.
+
+```json
+  "devcheckdb: "docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers -c 'SELECT * FROM \"Post\";'"
+```
+
 ## Connecting to database
+
+While raw SQL querying is definately and easily possible within express, in order to promote type security to match against the database, a ORM may be a easier choice, enter Prisma:
 
 ### Prisma ORM
 
@@ -288,17 +286,3 @@ services:
 volumes:
     db_data:
 ```
-
-initialise prisma client to db
-
-docker-compose run app npx prisma migrate dev --name init
-
-populateDB
-
-docker-compose run app npx ts-node /app/src/db/populateDB.ts
-
-verifyDB
-
-docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers
-
-SELECT \* FROM "Post";
