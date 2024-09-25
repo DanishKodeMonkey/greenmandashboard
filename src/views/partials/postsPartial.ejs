@@ -9,7 +9,8 @@
         <% posts.forEach(post => { %>
          <div class="row border-bottom py-2">
             <div class="col"><%= post.date.toISOString().split('T')[0] %></div>
-            <div class="col"><%= new Date(post.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) %></div>            <div class="col"><%= post.price.toFixed(2) %></div>
+            <div class="col"><%= new Date(post.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) %></div>            
+            <div class="col"><%= post.price.toFixed(2) %></div>
          </div>
         <% }) %>
     </div>
