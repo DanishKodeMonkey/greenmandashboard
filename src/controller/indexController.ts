@@ -5,6 +5,7 @@ import asyncHandler from 'express-async-handler'
 import { DashboardResponse } from "../interfaces";
 
 import postQueries from "../db/prismaQueries";
+import { prepareChartData } from "../utils/charts";
 
 /* 
 res: Response(object type shape)<DashboardResponse>(expected data shape) 
@@ -19,5 +20,22 @@ const getDashboard = asyncHandler(async(req: Request, res: Response<DashboardRes
 }
 })
 
+const getChart = asyncHandler(async(req: Request, res: Response)=>{
+    try{
+        const posts = await postQueries.getAllPosts()
+        const chartData = prepareChartData(posts)
+        const chartLayout = {
+            title: 'Price trends',
+            xaxis: {title: 'Date'},
+            yaxis: {title: 'Price'}
+        }
+        console.log(chartData)
+        res.render('chart', {title: 'Post chart', data: chartData, layout: chartLayout, errors: []})
+    }catch(err){
+        console.error(err)
+        res.status(500).send('Internal server error')
+    }
+})
+
 // export for router
-export default { getDashboard }
+export default { getDashboard, getChart}

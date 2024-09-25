@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('partials/head.ejs', {title: title}) %>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        <h1>Data chart</h1>
+        <div class="container">
+            <div>
+                <a href="/" class="btn btn-primary">&larr; Back</a>
+            </div>
+            <div id="dataPlot" style="width: 100%; height: 400px;"> </div>
+        </div>
+    <%- include('partials/footer.ejs') %>
+    <script>
+
+        // Embed data and layout using JSON.stringify()
+        const chartData = [{
+            x: <%- JSON.stringify(data.x) %>,
+            y: <%- JSON.stringify(data.y) %>,
+
+        }]
+
+        const chartLayout = <%- JSON.stringify(layout) %>
+        // Create the plot
+        Plotly.newPlot('dataPlot', chartData, chartLayout);
+    </script>
+    </body>
+</html>
