@@ -24,13 +24,9 @@ const getChart = asyncHandler(async(req: Request, res: Response)=>{
     try{
         const posts = await postQueries.getAllPosts()
         const chartData = prepareChartData(posts)
-        const chartLayout = {
-            title: 'Price trends',
-            xaxis: {title: 'Date'},
-            yaxis: {title: 'Price'}
-        }
+
         console.log(chartData)
-        res.render('chart', {title: 'Post chart', data: chartData, layout: chartLayout, errors: []})
+        res.render('chart', {title: 'Post chart', data: chartData, errors: []})
     }catch(err){
         console.error(err)
         res.status(500).send('Internal server error')
