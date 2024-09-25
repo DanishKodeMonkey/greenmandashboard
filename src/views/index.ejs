@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
     <head>
         <%- include('partials/head.ejs', {title: title}) %>
     </head>
-    <body>
-        <h1 class="text-center">Welcome to the <%= title %></h1>
+    <body id="theme">
+    <%- include('partials/header.ejs') %>
 
         <div class="container hei">
             <% if(errors.length > 0) { %>
