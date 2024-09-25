@@ -5,8 +5,9 @@
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     </head>
     <body>
-        <h1>Data chart</h1>
-        <div class="container">
+        <%- include('partials/header.ejs') %>
+
+        <div class="container plot-container p-2">
             <div>
                 <a href="/" class="btn btn-primary">&larr; Back</a>
             </div>
@@ -22,7 +23,17 @@
 
         }]
 
-        const chartLayout = <%- JSON.stringify(layout) %>
+        const currentTheme = document.body.getAttribute('data-bs-theme')
+        const chartLayout = {
+            title: 'Price trends',
+            xaxis: {title: 'Date'},
+            yaxis: {title: 'Price'},
+            paper_bgcolor: currentTheme === 'dark' ? 'rgba(0, 0, 0, 0)' : 'rgba(255, 255, 255, 0)', // Transparent background
+            plot_bgcolor: currentTheme === 'dark' ? 'rgba(0, 0, 0, 0)' : 'rgba(255, 255, 255, 0)', // Transparent plot area
+            font: {
+                color: currentTheme === 'dark' ? 'black' : 'grey'
+            }
+        }
         // Create the plot
         Plotly.newPlot('dataPlot', chartData, chartLayout);
     </script>
