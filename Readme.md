@@ -232,6 +232,14 @@ To simplify engagements for the project, a population script was made to generat
   "devcheckdb": "docker exec -it greendashboard-db-1 psql -U greenman -d powerrangers -c 'SELECT * FROM \"Post\";'"
 ```
 
+4. initiateprissma
+Initiates the prisma client by migrating the prisma schema to the database and generate a fresh prisma client for the dev environment.
+
+```json
+    "devinitiateprisma": "docker-compose run app npx prisma migrate dev --init"
+```
+
+
 ## Connecting to database
 
 While raw SQL querying is definately and easily possible within express, in order to promote type security to match against the database, a ORM may be a easier choice, enter Prisma:
@@ -286,3 +294,6 @@ services:
 volumes:
     db_data:
 ```
+
+
+docstobefinished()
